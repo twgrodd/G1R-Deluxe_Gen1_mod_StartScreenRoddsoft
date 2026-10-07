@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1
+
+- Renamed the manifest ID to `RoddSoft-Edition-Title-Screen`.
+- Renamed release ZIPs to `RoddSoft-Edition-Title-Screen-<version>.zip`.
+- This ID change intentionally requires a manual reinstall from older versions.
+
 ## 1.1.0
 
 - Promoted the mod to its first production release candidate.

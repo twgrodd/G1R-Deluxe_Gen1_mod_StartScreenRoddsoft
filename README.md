@@ -49,7 +49,9 @@ A valid import for the Gen 1 game being played is still required by G1R Deluxe.
 
 ## Updating
 
-The manifest includes this GitHub repository so G1R Deluxe can discover GitHub releases. G1R Deluxe may cache release information for several hours, so a newly published update may not appear immediately.
+The manifest ID is `RoddSoft-Edition-Title-Screen`, and release packages use the matching `RoddSoft-Edition-Title-Screen-<version>.zip` filename.
+
+Versions before 1.1.1 used a different internal mod ID, so upgrading from those versions requires uninstalling the old copy and manually installing 1.1.1 or newer. After that migration, the manifest includes this GitHub repository so G1R Deluxe can discover future releases. G1R Deluxe may cache release information for several hours, so a newly published update may not appear immediately.
 
 ## Repository
 

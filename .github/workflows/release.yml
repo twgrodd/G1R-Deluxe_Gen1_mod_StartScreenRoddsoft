@@ -60,7 +60,7 @@ jobs:
       - name: Build the mod .zip
         env:
           VERSION: ${{ steps.ver.outputs.version }}
-          MOD_ID: "startscreen_roddsoft"
+          MOD_SLUG: "RoddSoft-Edition-Title-Screen"
         run: |
           set -euo pipefail
           staging="$RUNNER_TEMP/pkg"
@@ -69,17 +69,17 @@ jobs:
           mkdir -p "$staging" "$out"
           git archive HEAD | tar -x -C "$staging"
           rm -rf "$staging/.github" "$staging/tools" "$staging/.gitattributes" "$staging/.gitignore" "$staging/.luarc.json"
-          zip_path="$out/${MOD_ID}-${VERSION}.zip"
+          zip_path="$out/${MOD_SLUG}-${VERSION}.zip"
           (cd "$staging" && zip -qr "$zip_path" .)
           unzip -l "$zip_path"
-          (cd "$out" && sha256sum "${MOD_ID}-${VERSION}.zip" > sha256sums.txt)
+          (cd "$out" && sha256sum "${MOD_SLUG}-${VERSION}.zip" > sha256sums.txt)
 
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.ver.outputs.version }}
           TAG: ${{ steps.ver.outputs.tag }}
-          MOD_ID: "startscreen_roddsoft"
+          MOD_SLUG: "RoddSoft-Edition-Title-Screen"
         run: |
           set -euo pipefail
           prev="$(git tag -l 'v*' --sort=-v:refname | head -1 || true)"
@@ -90,4 +90,4 @@ jobs:
             notes+=$'\n\n## Changes\n\n'"$changes"
           fi
           gh release create "$TAG" --target "$GITHUB_SHA" --title "$VERSION" --notes "$notes" \
-            "dist/${MOD_ID}-${VERSION}.zip" "dist/sha256sums.txt"
+            "dist/${MOD_SLUG}-${VERSION}.zip" "dist/sha256sums.txt"
