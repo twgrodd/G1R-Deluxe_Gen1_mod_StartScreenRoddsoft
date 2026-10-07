@@ -1,25 +1,24 @@
 # G1R Deluxe — RoddSoft Edition Start Screen
 
-A small **G1R Deluxe / Gen1Recomp API 2** graphics mod for Pokémon Red.
+A small **G1R Deluxe / Gen1Recomp API 2** graphics mod for the Gen 1 games.
 
-It changes the title-screen version ribbon from **Red Version** to
-**RoddSoft Edition**, while keeping the normal Pokémon logo, animated title
-Pokémon, trainer art, title-screen sequence, menu, and copyright art.
+It changes the Red/Blue title-screen version ribbon to **RoddSoft Edition**.
+On Yellow, which has no normal version ribbon, it adds the same branding to
+the existing Pikachu title composition while preserving Yellow's logo,
+Pikachu, speech bubble, blinking animation, cries, menu, and copyright art.
 
 ## Compatibility
 
 - G1R Deluxe / Gen1Recomp Mod API 2
 - Pokémon Red
+- Pokémon Blue
+- Pokémon Yellow
 - Engine range: `>=0.0.0-0 <2.0.0`
 
 ## How it works
 
-Current Gen1Recomp's `src/ui/TitleState.lua` reads title branding from
-`field.title`, then overlays values supplied through `field.boot.title`.
-The `versionRibbon` key is specifically supported as a continuous title
-ribbon and is centered by the stock title renderer.
-
-This mod patches only:
+Red and Blue use Gen1Recomp's supported `field.boot.title.versionRibbon`
+content seam. The mod supplies:
 
 ```lua
 mod.content.field:patch("boot", {
@@ -29,24 +28,25 @@ mod.content.field:patch("boot", {
 })
 ```
 
-That means it does **not** replace the whole title state and does not need to
-ship any graphics extracted from a Pokémon ROM.
+Yellow's stock title renderer intentionally does not draw a version ribbon.
+For Yellow only, the mod uses the `engine_internals` permission to extend
+`TitleState:draw()` after the normal Yellow composition has rendered, adding
+the authored RoddSoft artwork beneath the Pokémon logo. The rest of Yellow's
+title behavior remains the stock G1R Deluxe implementation.
 
 ## Asset
 
 `assets/roddsoft_edition.png` is original mod artwork: a transparent
-128×16 pixel ribbon containing “RoddSoft Edition” in a compact retro
-pixel style. It is not extracted from the game ROM.
-
-The source generator is included as `tools/make_assets.py`.
+128×16 image containing “RoddSoft Edition”. It is not extracted from the
+game ROM.
 
 ## Install
 
-Place the mod folder in G1R Deluxe's `mods` directory (or install it using
-the launcher's normal mod workflow), then enable **RoddSoft Edition Title
-Screen**.
+Install the release ZIP using G1R Deluxe's normal mod workflow and enable
+**RoddSoft Edition Title Screen**.
 
-A valid Pokémon Red import is still required by G1R itself.
+A valid import for the Gen 1 game being played is still required by G1R
+itself.
 
 ## Repository
 

@@ -1,17 +1,18 @@
 {
   "id": "startscreen_roddsoft",
   "name": "RoddSoft Edition Title Screen",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "api": 2,
   "entry": "main.lua",
   "profile": "content",
   "category": "GRAPHICS",
-  "games": ["red"],
+  "games": ["gen1"],
   "game_version": ">=0.0.0-0 <2.0.0",
   "priority": 100,
   "dependencies": [],
   "optional_dependencies": [],
   "conflicts": [],
-  "description": "Rebrands Pokemon Red's title-screen version ribbon as RoddSoft Edition without redistributing ROM-derived art.",
+  "permissions": ["engine_internals"],
+  "description": "Rebrands the Gen 1 title screen as RoddSoft Edition while preserving each game's original title composition.",
   "github": "twgrodd/G1R-Deluxe_Gen1_mod_StartScreenRoddsoft"
 }
