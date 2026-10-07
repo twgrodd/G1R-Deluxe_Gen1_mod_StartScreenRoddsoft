@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.5
+
+- Replaced Yellow's thin built-in-font subtitle with a native-pixel RoddSoft Edition badge.
+- Added chunky yellow two-line lettering on a deep-blue field to better match Pokemon Yellow's title palette.
+- Keeps Red and Blue title branding unchanged.
+
+
 ## 1.0.4
 
 - Reworked Yellow's RoddSoft Edition branding to fit the Yellow title screen cleanly.
