@@ -1,17 +1,15 @@
 name: Release
 
-# Standard G1R Deluxe / Gen1Recomp mod release workflow.
-# Generated from tools/mod_release_workflow.yml for startscreen_roddsoft.
+# Production releases are driven by an intentional manifest version bump.
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - '.github/**'
-      - '**.md'
+    paths:
+      - 'manifest.json'
   workflow_dispatch:
     inputs:
       version:
-        description: "Exact version to release (e.g. 0.3.0). Leave blank to auto-resolve."
+        description: "Exact version to release (must match manifest.json)."
         required: false
         default: ""
 
@@ -31,7 +29,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Determine version
+      - name: Determine and validate version
         id: ver
         env:
           DISPATCH_VERSION: ${{ github.event.inputs.version }}
@@ -40,56 +38,24 @@ jobs:
           python3 - <<'PY' >> "$GITHUB_OUTPUT"
           import json, os, re, subprocess, sys
           SEMVER = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
-          def sh(*args):
-              return subprocess.run(args, capture_output=True, text=True).stdout.strip()
-          def parse(text):
-              m = SEMVER.match(text)
-              return tuple(int(p) for p in m.groups()) if m else None
-          def die(msg):
-              print(f"::error::{msg}", file=sys.stderr)
-              raise SystemExit(1)
           with open("manifest.json", encoding="utf-8") as fh:
-              manifest_version = str(json.load(fh).get("version", ""))
-          released = sorted(
-              v for v in (parse(tag[1:]) for tag in sh("git", "tag", "-l", "v*").splitlines()) if v
-          )
-          latest = released[-1] if released else None
+              version = str(json.load(fh).get("version", "")).strip()
+          if not SEMVER.match(version):
+              print(f"::error::manifest version {version!r} is not X.Y.Z", file=sys.stderr)
+              raise SystemExit(1)
           override = os.environ.get("DISPATCH_VERSION", "").strip()
-          if not override:
-              found = re.search(r"\[release\s+(\d+\.\d+\.\d+)\]", sh("git", "log", "-1", "--pretty=%B"))
-              override = found.group(1) if found else ""
-          manifest_ver = parse(manifest_version)
-          if override:
-              version = parse(override) or die(f"invalid version override {override!r} (expected X.Y.Z)")
-          elif manifest_ver and (latest is None or manifest_ver > latest):
-              version = manifest_ver
-          elif latest:
-              major, minor, patch = latest
-              patch += 1
-              if patch > 99:
-                  minor, patch = minor + 1, 0
-              version = (major, minor, patch)
-          else:
-              die(f"manifest.json version {manifest_version!r} is not X.Y.Z and there is no vX.Y.Z tag")
-          text = "%d.%d.%d" % version
-          print(f"version={text}")
-          print(f"tag=v{text}")
+          if override and override != version:
+              print(f"::error::dispatch version {override!r} must match manifest version {version!r}", file=sys.stderr)
+              raise SystemExit(1)
+          tag = "v" + version
+          existing = subprocess.run(["git", "rev-parse", "-q", "--verify", "refs/tags/" + tag],
+                                    capture_output=True).returncode == 0
+          if existing:
+              print(f"::error::Tag {tag} already exists; bump manifest.json before releasing.", file=sys.stderr)
+              raise SystemExit(1)
+          print(f"version={version}")
+          print(f"tag={tag}")
           PY
-
-      - name: Refuse to clobber an existing release
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG: ${{ steps.ver.outputs.tag }}
-        run: |
-          set -euo pipefail
-          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
-            echo "::error::Tag $TAG already exists. Pick a different version."
-            exit 1
-          fi
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            echo "::error::Release $TAG already exists. Pick a different version."
-            exit 1
-          fi
 
       - name: Build the mod .zip
         env:
@@ -102,21 +68,11 @@ jobs:
           rm -rf "$staging" "$out"
           mkdir -p "$staging" "$out"
           git archive HEAD | tar -x -C "$staging"
-          rm -rf "$staging/.github" "$staging/.gitattributes" "$staging/.gitignore" "$staging/.luarc.json"
-          python3 - "$staging/manifest.json" "$VERSION" <<'PY'
-          import json, sys
-          path, version = sys.argv[1], sys.argv[2]
-          with open(path, encoding="utf-8") as fh:
-              manifest = json.load(fh)
-          manifest["version"] = version
-          with open(path, "w", encoding="utf-8") as fh:
-              json.dump(manifest, fh, indent=2, ensure_ascii=False)
-              fh.write("\n")
-          PY
+          rm -rf "$staging/.github" "$staging/tools" "$staging/.gitattributes" "$staging/.gitignore" "$staging/.luarc.json"
           zip_path="$out/${MOD_ID}-${VERSION}.zip"
           (cd "$staging" && zip -qr "$zip_path" .)
           unzip -l "$zip_path"
-          (cd "$out" && sha256sum "${MOD_ID}"-*.zip > sha256sums.txt)
+          (cd "$out" && sha256sum "${MOD_ID}-${VERSION}.zip" > sha256sums.txt)
 
       - name: Publish GitHub Release
         env:
@@ -126,7 +82,7 @@ jobs:
           MOD_ID: "startscreen_roddsoft"
         run: |
           set -euo pipefail
-          prev="$(git tag -l 'v*' --sort=-v:refname | grep -v "^${TAG}$" | head -1 || true)"
+          prev="$(git tag -l 'v*' --sort=-v:refname | head -1 || true)"
           range="${prev:+${prev}..}$GITHUB_SHA"
           changes="$(git log --no-merges --pretty='- %s' "$range" | head -50 || true)"
           notes=$'Download the .zip and install it from the game: MODS > Import mod .zip.'

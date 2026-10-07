@@ -1,11 +1,8 @@
 # G1R Deluxe — RoddSoft Edition Start Screen
 
-A small **G1R Deluxe / Gen1Recomp API 2** graphics mod for the Gen 1 games.
+A **G1R Deluxe / Gen1Recomp Mod API 2** graphics mod for Pokémon Red, Blue, and Yellow.
 
-It changes the Red/Blue title-screen version ribbon to **RoddSoft Edition**.
-On Yellow, which has no normal version ribbon, it adds the same branding to
-the existing Pikachu title composition while preserving Yellow's logo,
-Pikachu, speech bubble, blinking animation, cries, menu, and copyright art.
+The mod replaces the version branding on the Gen 1 title screen with **RoddSoft Edition** while retaining each game's normal title composition and behavior.
 
 ## Compatibility
 
@@ -17,36 +14,43 @@ Pikachu, speech bubble, blinking animation, cries, menu, and copyright art.
 
 ## How it works
 
-Red and Blue use Gen1Recomp's supported `field.boot.title.versionRibbon`
-content seam. The mod supplies:
+### Red and Blue
 
-```lua
-mod.content.field:patch("boot", {
-  title = {
-    versionRibbon = mod.path .. "/assets/roddsoft_edition.png",
-  },
-})
-```
+Red and Blue use Gen1Recomp's supported `field.boot.title.versionRibbon` content seam. The mod replaces that ribbon with:
 
-Yellow's stock title renderer intentionally does not draw a version ribbon.
-For Yellow only, the mod uses the `engine_internals` permission to extend
-`TitleState:draw()` after the normal Yellow composition has rendered, adding
-the authored RoddSoft artwork beneath the Pokémon logo. The rest of Yellow's
-title behavior remains the stock G1R Deluxe implementation.
+`assets/roddsoft_edition.png`
 
-## Asset
+The stock title-screen animation, Pokémon/trainer graphics, menu, and copyright graphics remain handled by G1R Deluxe.
 
-`assets/roddsoft_edition.png` is original mod artwork: a transparent
-128×16 image containing “RoddSoft Edition”. It is not extracted from the
-game ROM.
+### Yellow
+
+Pokémon Yellow uses a different title layout and does not render the Red/Blue version ribbon. For Yellow, the mod uses the `engine_internals` permission to extend `TitleState.draw` after the normal Yellow title composition is drawn.
+
+The Yellow path:
+
+- covers the stock left/right version lettering with small background patches;
+- draws `assets/roddsoft_yellow.png`, derived from the supplied RoddSoft reference artwork;
+- uses nearest-neighbor filtering so the badge remains pixel-sharp;
+- leaves Yellow's normal Pikachu/title behavior and menu flow intact.
+
+Because this path hooks an internal title renderer, Yellow compatibility is more sensitive to future G1R Deluxe renderer changes than Red/Blue.
+
+## Assets
+
+- `assets/roddsoft_edition.png` — Red/Blue RoddSoft Edition version ribbon.
+- `assets/roddsoft_yellow.png` — Yellow-specific RoddSoft badge artwork.
+
+Original RoddSoft code and artwork in this repository are covered by the included 0BSD license. Third-party trademarks, game data, and other materials remain the property of their respective owners.
 
 ## Install
 
-Install the release ZIP using G1R Deluxe's normal mod workflow and enable
-**RoddSoft Edition Title Screen**.
+Download the release ZIP and import it through **MODS > Import mod .zip** in G1R Deluxe, then enable **RoddSoft Edition Title Screen**.
 
-A valid import for the Gen 1 game being played is still required by G1R
-itself.
+A valid import for the Gen 1 game being played is still required by G1R Deluxe.
+
+## Updating
+
+The manifest includes this GitHub repository so G1R Deluxe can discover GitHub releases. G1R Deluxe may cache release information for several hours, so a newly published update may not appear immediately.
 
 ## Repository
 
