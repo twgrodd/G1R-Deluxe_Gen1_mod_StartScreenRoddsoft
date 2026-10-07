@@ -2,14 +2,13 @@
 
 A **G1R Deluxe / Gen1Recomp Mod API 2** graphics mod for Pokémon Red, Blue, and Yellow.
 
-The mod replaces the version branding on the Gen 1 title screen with **RoddSoft Edition** while retaining each game's normal title composition and behavior.
+Add Roddsoft Edition branding to the start-screen. that's it! 
+
 
 ## Compatibility
 
 - G1R Deluxe / Gen1Recomp Mod API 2
-- Pokémon Red
-- Pokémon Blue
-- Pokémon Yellow
+- Gen 1 (Red, Blue and Yellow)
 - Engine range: `>=0.0.0-0 <2.0.0`
 
 ## How it works
