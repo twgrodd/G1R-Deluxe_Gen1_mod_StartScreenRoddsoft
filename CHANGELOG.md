@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.4
+
+- Reworked Yellow's RoddSoft Edition branding to fit the Yellow title screen cleanly.
+- Yellow now uses two centered lines in yellow with a dark-blue pixel shadow.
+- Red and Blue title branding is unchanged.
+
 ## 1.0.3
 
 - Expanded compatibility to all Gen 1 games: Red, Blue, and Yellow.
@@ -18,5 +24,5 @@
 ## 1.0.0
 
 - Initial RoddSoft Edition title-screen mod.
-- Replaces the Pokémon Red version ribbon through the supported `field.boot.title.versionRibbon` seam.
-- Keeps the stock G1R Deluxe title sequence and ROM-imported artwork.
+- Replaces the Red version ribbon through the supported field.boot.title.versionRibbon seam.
+- Keeps the stock G1R Deluxe title sequence and imported artwork.
