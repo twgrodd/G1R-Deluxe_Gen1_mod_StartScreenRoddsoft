@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.6
+
+- Replaced the generated Yellow badge with artwork derived directly from the supplied reference image.
+- Preserves the reference's chunky yellow RoddSoft Edition lettering and deep-blue oval treatment.
+- Renders the badge at native pixel resolution with nearest-neighbor filtering.
+- Red and Blue remain unchanged.
+
+
 ## 1.0.5
 
 - Replaced Yellow's thin built-in-font subtitle with a native-pixel RoddSoft Edition badge.
